@@ -7,14 +7,19 @@ TagManager:
   - Ground
   - Battery
   - Item
+  - Item_01
+  - Item_02
+  - itemDoor
+  - controleporta
+  - item_03
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - Wall
   - Water
   - UI
-  - 
+  - itensfrente
   - 
   - 
   - 

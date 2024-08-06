@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Security;
 using UnityEngine;
 
 public class PlayerControl : MonoBehaviour
@@ -12,12 +13,17 @@ public class PlayerControl : MonoBehaviour
 
     public float _Player_Speed = 5;
     public bool _Player_Isgrounded;
+    public bool wallAhead;
     public bool _Item_In = false; // New boolean to track if player has an item
     public GameObject currentItem; // Reference to the current item
 
+
+    [SerializeField] private LayerMask layerMask;
+
     void Start()
     {
-        _Player_Animator = GetComponent<Animator>();
+        _Item_In = false;
+        _Player_Animator = GetComponentInChildren<Animator>();
         _Player_Rigidbody = GetComponent<Rigidbody>();
     }
 
@@ -25,6 +31,8 @@ public class PlayerControl : MonoBehaviour
     {
         Look();
         TakeInput();
+        VerifyWall();
+
     }
 
     private void FixedUpdate()
@@ -51,16 +59,40 @@ public class PlayerControl : MonoBehaviour
 
     void Walking() //usado para verificar se estamos nos movendo e caso sim, nos movemos
     {
-        if (_Player_Input != Vector3.zero)
+        if (wallAhead == false && _Player_Input != Vector3.zero)
         {
+            _Player_Animator = GetComponentInChildren<Animator>();
             _Player_Animator.SetBool("IsMoving", true);
             _Player_Rigidbody.MovePosition(transform.position + (transform.forward * _Player_Input.magnitude) * _Player_Speed * Time.deltaTime);
         }
         else
         {
+            _Player_Animator = GetComponentInChildren<Animator>();
             _Player_Animator.SetBool("IsMoving", false);
         }
     }
+
+    void VerifyWall()
+    {
+
+
+        if (Physics.Raycast(transform.position, transform.forward, 1f, layerMask))
+        {
+            Debug.DrawRay(transform.position, transform.forward, Color.red);
+
+            wallAhead = true;
+        }
+        else
+        {
+            wallAhead = false;
+        }
+
+
+
+
+    }
+
+
 
     private void OnCollisionEnter(Collision collision)
     {
@@ -93,13 +125,18 @@ public class PlayerControl : MonoBehaviour
             {
                 Debug.LogWarning("BatteryScript not found on Battery.");
             }
+            if (!currentItem.CompareTag("item_03"))
+            {
+                Destroy(currentItem); // Destroy the collected item
+                Debug.Log("Item destroyed.");
 
-            Destroy(currentItem); // Destroy the collected item
-            Debug.Log("Item destroyed.");
+            }
 
             _Item_In = false; // Reset the item status
             currentItem = null; // Clear the reference to the current item
         }
+
+
     }
     #endregion
 }
