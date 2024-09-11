@@ -2710,7 +2710,7 @@ MonoBehaviour:
   currentItem: {fileID: 0}
   layerMask:
     serializedVersion: 2
-    m_Bits: 8
+    m_Bits: 72
 --- !u!114 &570328339
 MonoBehaviour:
   m_ObjectHideFlags: 0
